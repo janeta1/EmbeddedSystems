@@ -5,12 +5,12 @@
 
 void setup() {
   #if APP_USED == LAB1_1
-      lab_1_1_setup();
+      lab11Setup();
   #endif
 }
 
 void loop() {
   #if APP_USED == LAB1_1
-      lab_1_1_loop();
+      lab11Loop();
   #endif
 }

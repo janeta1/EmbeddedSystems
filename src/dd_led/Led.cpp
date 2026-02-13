@@ -1,26 +1,26 @@
 #include <Arduino.h>
 #include "Led.h"
 
-void led_init(int pin) {
+void ledInit(int pin) {
     pinMode(pin, OUTPUT); // Set the pin as an output
 }
 
-void led_turn_on(int pin) {
+void ledTurnOn(int pin) {
     digitalWrite(pin, HIGH); // Turn the LED on
 }
 
-void led_turn_off(int pin) {
+void ledTurnOff(int pin) {
     digitalWrite(pin, LOW); // Turn the LED off
 }
 
-int is_led_on(int pin) {
+int isLedOn(int pin) {
     return digitalRead(pin) == HIGH ? 1 : 0; // Return 1 if LED is on, 0 if off
 }
 
-void toggle_led(int pin) {
-    if (is_led_on(pin)) {
-        led_turn_off(pin);
+void toggleLed(int pin) {
+    if (isLedOn(pin)) {
+        ledTurnOff(pin);
     } else {
-        led_turn_on(pin);
+        ledTurnOn(pin);
     }
 }

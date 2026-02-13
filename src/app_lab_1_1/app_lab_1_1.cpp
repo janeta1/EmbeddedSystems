@@ -9,13 +9,13 @@
 #define BAUD_RATE 9600
 #define BUFFER_SIZE 20
 
-void lab_1_1_setup() {
+void lab11Setup() {
     // Initialize serial communication
-    serial_init(BAUD_RATE);
+    serialInit(BAUD_RATE);
 
     // Initialize the LED
-    led_init(LED_PIN);
-    led_turn_off(LED_PIN); // Start with the LED off
+    ledInit(LED_PIN);
+    ledTurnOff(LED_PIN); // Start with the LED off
 
     printf("--- app_lab_1_1: Started ---\r\n");
     printf("Available commands:\r\n");
@@ -23,7 +23,7 @@ void lab_1_1_setup() {
     printf(" led off - Turn the LED OFF\r\n");
 }
 
-void lab_1_1_loop() {
+void lab11Loop() {
     char command[BUFFER_SIZE];
 
     printf("\r\nEnter command: ");
@@ -37,10 +37,10 @@ void lab_1_1_loop() {
 
     // Process the command
     if (strcmp(command, "led on") == 0) {
-        led_turn_on(LED_PIN);
+        ledTurnOn(LED_PIN);
         printf("LED is turned ON\r\n");
     } else if (strcmp(command, "led off") == 0) {
-        led_turn_off(LED_PIN);
+        ledTurnOff(LED_PIN);
         printf("LED is turned OFF\r\n");
     } else {
         printf("! WARNING ! Unknown command. Use 'led on' or 'led off'\r\n");
