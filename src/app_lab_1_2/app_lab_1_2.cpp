@@ -23,7 +23,7 @@ void appLab12Setup() {
     ledInit(RED_LED_PIN);
 
     printf("- System Ready -\n");
-    delay(1000);
+    delay(2000);
 }
 
 void appLab12Loop() {
@@ -36,8 +36,8 @@ void appLab12Loop() {
     // Read the code from the keypad
     for (int i = 0; i < CODE_LENGTH; i++) {
         scanf("%c", &enteredCode[i]);
-        // printf("%c", enteredCode[i]);
-        printf("*"); // mask input
+        printf("%c", enteredCode[i]);
+        // printf("*"); // mask input
     }
 
     // Null-terminate the entered code
@@ -55,7 +55,7 @@ void appLab12Loop() {
         ledTurnOff(GREEN_LED_PIN);
     }
 
-    delay(3000); // Wait before allowing another attempt
+    delay(5000); // Wait before allowing another attempt
 
     // Reset the system for the next attempt
     ledTurnOff(GREEN_LED_PIN);
