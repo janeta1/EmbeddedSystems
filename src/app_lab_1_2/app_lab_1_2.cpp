@@ -31,7 +31,7 @@ void appLab12Loop() {
 
     // Clear the LCD
     printf("%c", 0x1B);
-    printf("> Enter Code: ");
+    printf(">Enter Code:");
 
     // Read the code from the keypad
     for (int i = 0; i < CODE_LENGTH; i++) {

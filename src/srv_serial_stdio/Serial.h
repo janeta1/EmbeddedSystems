@@ -1,7 +1,7 @@
 #ifndef SearialIO_H
 #define SearialIO_H
 
-#include <stddef.h>
+#include <stdio.h>
 
 void serialInit(long baudRate);
 int serialPutChar(char c, FILE *stream);
