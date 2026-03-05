@@ -6,26 +6,26 @@
 #include <Arduino.h>
 #include <avr/interrupt.h>
 
-#define BUTTON_PIN 7
-#define LED_GREEN_PIN 4
-#define LED_RED_PIN 5
-#define YELLOW_LED_PIN 6
+#define BUTTON_PIN 2
+#define LED_GREEN_PIN 3
+#define LED_RED_PIN 4
+#define YELLOW_LED_PIN 5
 
 #define LONG_PRESS_MS 500
 #define SHORT_PRESS_BLINKS 5
 #define LONG_PRESS_BLINKS 10
 
 // Task 1 globals
-bool globalNewPressDetected = false;
-uint32_t globalLastPressDuration = 0;
-bool globalIsLongPress = false;
+static bool globalNewPressDetected = false;
+static uint32_t globalLastPressDuration = 0;
+static bool globalIsLongPress = false;
 
 // Task 2 globals
-uint32_t globalTotalPresses = 0;
-uint32_t globalShortPresses = 0;
-uint32_t globalLongPresses = 0;
-uint32_t globalSumShortPressDuration = 0;
-uint32_t globalSumLongPressDuration = 0;
+static uint32_t globalTotalPresses = 0;
+static uint32_t globalShortPresses = 0;
+static uint32_t globalLongPresses = 0;
+static uint32_t globalSumShortPressDuration = 0;
+static uint32_t globalSumLongPressDuration = 0;
 
 // Task 1 state
 typedef enum {
