@@ -5,15 +5,6 @@
 #include <semphr.h>
 
 // ----------Alert thresholds----------
-// // Sensor 1 - Potentiometer
-// #define POT_THRESHOLD_HIGH 26
-// #define POT_THRESHOLD_LOW 24
-// #define POT_DEBOUNCE 5
-
-// // Sensor 2 - DS18B20
-// #define DS18B20_THRESHOLD_HIGH  26
-// #define DS18B20_THRESHOLD_LOW   24
-// #define DS18B20_DEBOUNCE        5
 
 // Sensor 1 - NTC
 #define NTC_THRESHOLD_HIGH 26
@@ -41,10 +32,16 @@ void srvSnsTempAcquire();
 // Called from conditioning task every 20ms (processes alert logic)
 void srvSnsTempProcess();
 
+// Called from task_conditioning
+void srvSnsTempSetNtcFiltered(float value);
+void srvSnsTempSetDhtFiltered(float value);
+
 // Called from task_report 
 int srvSnsTempGetNtcRaw();
 int srvSnsTempGetNtcVoltage();
 float srvSnsTempGetNtcCelsius();
+float srvSnsTempGetNtcFiltered();
+float srvSnsTempGetDhtFiltered();
 float srvSnsTempGetDhtTemperature();
 float srvSnsTempGetDhtHumidity();
 AlertState srvSnsTempGetAlert1();

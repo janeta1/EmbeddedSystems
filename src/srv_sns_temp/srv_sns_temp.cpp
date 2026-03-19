@@ -19,6 +19,7 @@ static SemaphoreHandle_t s_mutex = NULL;
 static int sNtcRaw = 0;
 static int sNtcVoltage = 0;
 static float sNtcTemperature = 0.0;
+static float sNtcFiltered = 0.0;
 static AlertState sAlert1 = {false, false, 0};
 
 // // Sensor 2 - DS18B20
@@ -88,7 +89,7 @@ void srvSnsTempAcquire() {
 // For conditioning task: process alert logic based on latest sensor data
 void srvSnsTempProcess() {
     if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
-        updateAlert(&sAlert1, sNtcTemperature,
+        updateAlert(&sAlert1, sNtcFiltered,
                     NTC_THRESHOLD_HIGH, NTC_THRESHOLD_LOW, NTC_DEBOUNCE);
         updateAlert(&sAlert2, sDhtTemperature,
                     DHT_THRESHOLD_HIGH, DHT_THRESHOLD_LOW, DHT_DEBOUNCE);
@@ -96,34 +97,15 @@ void srvSnsTempProcess() {
     }
 }
 
+// Setters
+void srvSnsTempSetNtcFiltered(float value) {
+    if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
+        sNtcFiltered = value;
+        xSemaphoreGive(s_mutex);
+    }
+}
+
 // Getters
-// int srvSnsTempGetPotRaw() {
-//     int value = 0;
-//     if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
-//         value = sPotRaw;
-//         xSemaphoreGive(s_mutex);
-//     }
-//     return value;
-// }
-
-// int srvSnsTempGetPotVoltage() {
-//     int value = 0;
-//     if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
-//         value = sPotVoltage;
-//         xSemaphoreGive(s_mutex);
-//     }
-//     return value;
-// }
-
-// float srvSnsTempGetPotCelsius() {
-//     float value = 0.0;
-//     if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
-//         value = sPotTemperature;
-//         xSemaphoreGive(s_mutex);
-//     }
-//     return value;
-// }
-
 int srvSnsTempGetNtcRaw() {
     int value = 0;
     if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
@@ -146,6 +128,15 @@ float srvSnsTempGetNtcCelsius() {
     float value = 0.0;
     if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
         value = sNtcTemperature;
+        xSemaphoreGive(s_mutex);
+    }
+    return value;
+}
+
+float srvSnsTempGetNtcFiltered() {
+    float value = 0.0;
+    if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
+        value = sNtcFiltered;
         xSemaphoreGive(s_mutex);
     }
     return value;

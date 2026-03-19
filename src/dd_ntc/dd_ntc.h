@@ -17,5 +17,6 @@ void ddNtcLoop();
 int ddNtcGetRaw();
 int ddNtcGetVoltage();
 float ddNtcGetCelsius();
+float ddNtcConvertToCelsius(int raw);
 
 #endif // DD_NTC_H

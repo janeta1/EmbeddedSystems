@@ -18,17 +18,19 @@ void ddNtcLoop() {
     sVoltage = map(sRawValue, 0, DD_ADC_MAX, 0, 5000);
     
     // Step 3: RAW -> resistance (NTC on top of voltage divider)
-    if (sRawValue == 0) {
-        sCelsius = -273; // Avoid division by zero, return absolute zero
-        return;
+    sCelsius = ddNtcConvertToCelsius(sRawValue);
+
+}
+
+float ddNtcConvertToCelsius(int raw) {
+    if (raw == 0) {
+        return sCelsius -273.0f;
     }
-float resistance = DD_NTC_SERIES_R / (DD_ADC_MAX / (float)sRawValue - 1.0);
+    float resistance = DD_NTC_SERIES_R / (DD_ADC_MAX / (float)raw - 1.0);
     // Step 4: Resistance -> temperature using Beta formula
     float steinhart = log(resistance / DD_NTC_NOMINAL_R) / DD_NTC_BETA; // ln(R/R0) / B
     steinhart += 1.0 / DD_NTC_NOMINAL_TEMP; // + (1/To)
-
-    sCelsius = (1 / steinhart) - 273.15; // Convert from Kelvin to Celsius
-
+    return (1 / steinhart) - 273.15;
 }
 
 int ddNtcGetRaw() {
