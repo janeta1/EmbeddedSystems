@@ -1,4 +1,5 @@
 #include "srv_sig_cond.h"
+#include <math.h>
 
 float srvSigCondSaturate(float value, float min, float max) {
     if (value < min) return min;
@@ -39,4 +40,10 @@ float srvSigCondIIR(float median, float *wma, bool *ready, int alpha) {
         *wma = (alpha * median + (100 - alpha) * *wma) / 100;
     }
     return *wma;
+}
+
+float srvSigCondRamp(float current, float target, float step) {
+    if (current < target) return fmin(current + step, target);
+    if (current > target) return fmax(current - step, target);
+    return current;
 }

@@ -5,5 +5,6 @@
 
 void srvStdioKeypadSetup();
 int srvStdioKeypadGetKey(FILE *stream);
+char srvStdioKeypadPoll();
 
 #endif

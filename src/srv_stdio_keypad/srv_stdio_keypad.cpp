@@ -16,8 +16,8 @@ char hexaKeys[ROWS][COLS] = {
   {'7','8','9','C'},
   {'*','0','#','D'}
 };
-byte rowPins[ROWS] = {2, 3, 4, 5}; //connect to the row pinouts of the keypad
-byte colPins[COLS] = {6, 7, 8, 9}; //connect to the column pinouts of the keypad
+byte rowPins[ROWS] = {9, 8, 7, 6}; //connect to the row pinouts of the keypad
+byte colPins[COLS] = {5, 4, 3, 2}; //connect to the column pinouts of the keypad
 
 //initialize an instance of class NewKeypad
 Keypad customKeypad = Keypad( makeKeymap(hexaKeys), rowPins, colPins, ROWS, COLS); 
@@ -37,4 +37,8 @@ int srvStdioKeypadGetKey(FILE *stream) {
 
     delay(SRV_KEYPAD_REPEAT_DELAY); // read frequency 1/SRV_KEYPAD_REPEAT_DELAY ms
     return (int) customKey;
+}
+
+char srvStdioKeypadPoll() {
+    return customKeypad.getKey();
 }

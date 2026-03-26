@@ -1,6 +1,7 @@
 #include <Arduino.h>
 #include "Serial.h"
 #include <stdio.h>
+#include <Arduino_FreeRTOS.h>
 
 // Write character to Serial
 int serialPutChar(char c, FILE *stream) {
@@ -11,11 +12,10 @@ int serialPutChar(char c, FILE *stream) {
 // Read character from Serial
 int serialGetChar(FILE *stream) {
     while (!Serial.available()) {
-        ; // Wait for data
+        vTaskDelay(pdMS_TO_TICKS(50));
     }
     return Serial.read();
 }
-
 
 void serialInit(long baudRate) {
     Serial.begin(baudRate);
@@ -25,11 +25,9 @@ void serialInit(long baudRate) {
 
     // Setup stdin and stdout to use serial port
 
-    FILE *myStream = fdevopen(serialPutChar, serialGetChar);
-    if (myStream == NULL) {
-        // Handle error
-        Serial.println("Failed to open serial stream");
-    } else {
-        stdout = stdin = stderr = myStream; // Set all standard streams to our serial stream
-    }
+    static FILE myStream;
+    fdev_setup_stream(&myStream, serialPutChar, serialGetChar, _FDEV_SETUP_RW);
+    stdout = &myStream;
+    stdin  = &myStream;
+    stderr = &myStream;
 }
