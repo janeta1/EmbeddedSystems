@@ -4,6 +4,7 @@
 #include <Arduino_FreeRTOS.h>
 #include <semphr.h>
 #include "dd_relay/dd_relay.h"
+#include "dd_l298/dd_l298.h"
 
 typedef struct {
     // Relay
@@ -11,16 +12,16 @@ typedef struct {
     RelayState relayApplied;
     bool       relayPending;
     int        relayDebounce;
-    // Servo
-    int  servoRaw;
-    int  servoSat;
-    int  servoMedian;
-    int  servoWeighted;
-    int  servoRamped;
-    int  servoApplied;
-    bool servoSaturated;
-    // Command acknowledgement — set by taskInput, printed+cleared by taskReport
-    char cmdAck[32];
+    // Motor
+    int  motorRaw;
+    int  motorSat;
+    int  motorMedian;
+    int  motorWeighted;
+    int  motorRamped;
+    int  motorApplied;
+    bool motorSaturated;
+    MotorDirection motorDirection;
+    bool motorRunning;
 } TaskConditioningState42;
 
 extern TaskConditioningState42 s_state42;

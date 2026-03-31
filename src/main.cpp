@@ -16,7 +16,7 @@
 #define LAB3_2 32
 #define LAB4_1 41
 #define LAB4_2 42
-#define APP_USED LAB4_1
+#define APP_USED LAB4_2
 
 void setup() {
     #if APP_USED == LAB1_1

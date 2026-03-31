@@ -3,7 +3,7 @@
 #include "task_conditioning_4_2.h"
 #include "task_report_4_2.h"
 #include "dd_relay/dd_relay.h"
-#include "dd_servo/dd_servo.h"
+#include "dd_l298/dd_l298.h"
 #include "srv_stdio_lcd/srv_stdio_lcd.h"
 #include "srv_serial_stdio/Serial.h"
 #include "dd_led/Led.h"
@@ -18,7 +18,7 @@ void appLab42Setup() {
     srvStdioLCDSetup();
 
     ddRelayInit(RELAY_PIN42);
-    ddServoInit(SERVO_PIN42);
+    ddL298Init(L298_ENA_PIN42, L298_IN1_PIN42, L298_IN2_PIN42);
 
     // Initialize tasks
     taskInputInit42();

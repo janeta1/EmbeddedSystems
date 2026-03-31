@@ -3,8 +3,8 @@
 
 #include <Arduino_FreeRTOS.h>
 
-#define RELAY_PIN41 22
-#define SERVO_PIN41 11
+#define RELAY_PIN41 7
+#define SERVO_PIN41 6
 #define BUTTON_RELAY41 23
 
 // Task periods

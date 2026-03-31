@@ -2,15 +2,20 @@
 #define TASK_INPUT_4_2_H
 
 #include <Arduino_FreeRTOS.h>
+#include "dd_l298/dd_l298.h"
 
 typedef struct {
     bool relayRequested; // true = ON, false = OFF
-    int servoAngle;      // 0 to 180 degrees
+    int motorSpeed;     // 0-255
+    MotorDirection motorDirection; // MOTOR_STOP, MOTOR_FORWARD, MOTOR_BACKWARD
+    bool motorDirectionSet; // true if direction was set by user, false if not
+    bool motorStop;
+    bool motorStart;
     char lastError[64];   // For storing error messages (if needed)
-} TaskInput;
+} TaskInput42;
 
 void taskInputInit42();
-TaskInput taskInputGetLatest42();
+TaskInput42 taskInputGetLatest42();
 void taskInput42(void *pvParameters);
 
 #endif // TASK_INPUT_4_2_H

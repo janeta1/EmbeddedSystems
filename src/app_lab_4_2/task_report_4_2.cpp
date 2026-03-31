@@ -7,6 +7,14 @@
 #include "srv_stdio_lcd/srv_stdio_lcd.h"
 #include "task_input_4_2.h"
 
+static const char* dirStr(MotorDirection d) {
+    switch (d) {
+        case MOTOR_FORWARD:  return "FWD";
+        case MOTOR_BACKWARD: return "BWD";
+        default:             return "STP";
+    }
+}
+
 void taskReport42(void *pvParameters) {
     (void) pvParameters; // Unused parameter
     TickType_t lastWakeTime = xTaskGetTickCount();
@@ -14,7 +22,7 @@ void taskReport42(void *pvParameters) {
     for (;;) {
         vTaskDelayUntil(&lastWakeTime, pdMS_TO_TICKS(TASK_REPORT42_MS)); 
 
-        TaskConditioningState42 snap = { RELAY_OFF, RELAY_OFF, false, 0, 0, 0, 0, 0, 0, 0, false, "" };
+        TaskConditioningState42 snap = {RELAY_OFF, RELAY_OFF, false, 0, 0, 0, 0, 0, 0, 0, false, MOTOR_STOP, false};
         if (xSemaphoreTake(s_stateMutex42, portMAX_DELAY) == pdTRUE) {
             snap = s_state42; // Copy the latest snapshot
             xSemaphoreGive(s_stateMutex42);
@@ -26,9 +34,10 @@ void taskReport42(void *pvParameters) {
             snap.relayApplied == RELAY_ON ? "ON " : "OFF",
             snap.relayDebounce,
             snap.relayPending ? "PD" : "OK");
-        printf("SRV:%3d SAT:%s\n",
-            snap.servoApplied,
-            snap.servoSaturated ? "YES" : "NO ");
+        printf("MTR:%3d %s SAT:%s\n",
+            snap.motorApplied,
+            dirStr(snap.motorDirection),
+            snap.motorSaturated ? "YES" : "NO ");
  
         // --- Serial full report every 500ms ---
         printf("==============================\n");
@@ -40,14 +49,16 @@ void taskReport42(void *pvParameters) {
         printf("  Debounce:  %s (%d/%d)\n",
             snap.relayPending ? "PENDING" : "STABLE",
             snap.relayDebounce, RELAY_DEBOUNCE_COUNT);
-        printf(" [Servo Pipeline]\n");
-        printf("  Raw:       %d deg\n",  snap.servoRaw);
-        printf("  Saturated: %d deg %s\n", snap.servoSat, snap.servoSaturated ? "(!)" : "");
-        printf("  Median:    %d deg\n",  snap.servoMedian);
-        printf("  Weighted:  %d deg\n",  snap.servoWeighted);
-        printf("  Ramped:    %d deg\n",  snap.servoRamped);
-        printf("  Applied:   %d deg\n",  snap.servoApplied);
-        TaskInput snapCmd = taskInputGetLatest42();
+        printf(" [Motor Pipeline]\n");
+        printf("  Direction: %s\n", dirStr(snap.motorDirection));
+        printf("  Running:   %s\n", snap.motorRunning ? "YES" : "NO");
+        printf("  Raw:       %d\n",  snap.motorRaw);
+        printf("  Saturated: %d %s\n", snap.motorSat, snap.motorSaturated ? "(!)" : "");
+        printf("  Median:    %d\n",  snap.motorMedian);
+        printf("  Weighted:  %d\n",  snap.motorWeighted);
+        printf("  Ramped:    %d\n",  snap.motorRamped);
+        printf("  Applied:   %d\n",  snap.motorApplied);
+        TaskInput42 snapCmd = taskInputGetLatest42();
         if (snapCmd.lastError[0] != '\0') {
             printf("[ERROR]: %s\n", snapCmd.lastError);
         }
