@@ -7,6 +7,7 @@
 #include "app_lab_3_2/app_lab_3_2.h"
 #include "app_lab_4_1/app_lab_4_1.h"
 #include "app_lab_4_2/app_lab_4_2.h"
+#include "app_lab_5_1/app_lab_5_1.h"
 
 #define LAB1_2 12
 #define LAB1_1 11
@@ -16,7 +17,8 @@
 #define LAB3_2 32
 #define LAB4_1 41
 #define LAB4_2 42
-#define APP_USED LAB4_2
+#define LAB5_1 51
+#define APP_USED LAB5_1
 
 void setup() {
     #if APP_USED == LAB1_1
@@ -35,6 +37,8 @@ void setup() {
         appLab41Setup();
     #elif APP_USED == LAB4_2
         appLab42Setup();
+    #elif APP_USED == LAB5_1
+        appLab51Setup();
     #endif
 }
 
@@ -55,5 +59,7 @@ void loop() {
         appLab41Loop();
     #elif APP_USED == LAB4_2
         appLab42Loop();
+    #elif APP_USED == LAB5_1
+        appLab51Loop();
     #endif
 }
