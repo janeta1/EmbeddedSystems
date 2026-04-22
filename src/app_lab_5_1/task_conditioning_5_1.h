@@ -15,7 +15,8 @@ typedef struct {
     RelayState relayRequested; 
     RelayState relayApplied;  
     bool       relayPending;   
-    int        relayDebounce;  
+    int        relayDebounce; 
+    bool       fanRunning; 
 } TaskConditioningState51;
 
 extern TaskConditioningState51 s_condState51;

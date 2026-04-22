@@ -5,11 +5,15 @@
 
 #define RELAY_PIN51 7
 
+#define L298_ENA_PIN51 6
+#define L298_IN1_PIN51 4
+#define L298_IN2_PIN51 5
+
 // Hysteresis thresholds around SetPoint
 #define HYSTERESIS_DELTA 1.0f   // Von = SP - delta, Voff = SP + delta
 
 // Default SetPoint (degrees C)
-#define DEFAULT_SETPOINT 25.0f
+#define DEFAULT_SETPOINT 27.0f
 
 // Task periods
 #define TASK_ACQ51_MS 2000

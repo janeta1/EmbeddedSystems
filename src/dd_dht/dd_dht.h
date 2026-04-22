@@ -3,8 +3,8 @@
 
 #include <DHT.h>
 
-#define DHT_PIN 18
-#define DHT_TYPE DHT22
+#define DHT_PIN 17
+#define DHT_TYPE DHT11
 
 #define DHT_READ_INTERVAL_MS 2000
 

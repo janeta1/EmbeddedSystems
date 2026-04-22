@@ -5,6 +5,7 @@
 #include "task_input_5_1.h"
 #include "dd_relay/dd_relay.h"
 #include "dd_dht/dd_dht.h"
+#include "dd_l298/dd_l298.h"
 #include "srv_stdio_lcd/srv_stdio_lcd.h"
 #include "srv_serial_stdio/Serial.h"
 #include <Arduino.h>
@@ -17,6 +18,8 @@ void appLab51Setup() {
 
     ddRelayInit(RELAY_PIN51);
     ddDhtSetup();
+
+    ddL298Init(L298_ENA_PIN51, L298_IN1_PIN51, L298_IN2_PIN51);
 
     // Initialize tasks
     taskInputInit51();

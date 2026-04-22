@@ -3,6 +3,7 @@
 #include "task_input_5_1.h"
 #include "app_lab_5_1.h"
 #include "dd_relay/dd_relay.h"
+#include "dd_l298/dd_l298.h"
 #include <Arduino_FreeRTOS.h>
 #include <semphr.h>
 
@@ -17,12 +18,10 @@ TaskConditioningState51 s_condState51 = {
     RELAY_OFF,              // relayRequested
     RELAY_OFF,              // relayApplied
     false,                  // relayPending
-    0                       // relayDebounce
+    0,                       // relayDebounce
+    false                   // fanRunning
 };
 SemaphoreHandle_t s_condMutex51 = NULL;
-
-// Hysteresis state — persists between cycles
-static RelayState sControlOutput = RELAY_OFF;
 
 void taskConditioningInit51() {
     s_condMutex51 = xSemaphoreCreateMutex();
@@ -45,18 +44,18 @@ void taskConditioning51(void *pvParameters) {
         float humidity = acq.humidity;
 
         // 2. ON-OFF with hysteresis logic (formula 6.2 from lab manual)
-        //    - if temp < Von  → relay ON
-        //    - if temp > Voff → relay OFF
+        //    - if temp < Von  → relay ON, fan OFF
+        //    - if temp > Voff → relay OFF, fan ON
         //    - else           → keep previous state (sControlOutput unchanged)
         if (temp < von) {
-            sControlOutput = RELAY_ON;
+            ddRelaySetRequested(RELAY_ON);
+            ddL298Stop();
         } else if (temp > voff) {
-            sControlOutput = RELAY_OFF;
+            ddRelaySetRequested(RELAY_OFF);
+            ddL298SetDirection(MOTOR_FORWARD);
+            ddL298SetSpeed(70);
         }
         // else: do nothing — maintain previous output
-
-        // 3. Pass desired state to relay driver and step debounce
-        ddRelaySetRequested(sControlOutput);
         ddRelayStep();
 
         // 4. Update shared snapshot for task_report
@@ -71,6 +70,7 @@ void taskConditioning51(void *pvParameters) {
             s_condState51.relayApplied   = ddRelayGetApplied();
             s_condState51.relayPending   = ddRelayGetPending() != ddRelayGetApplied();
             s_condState51.relayDebounce  = ddRelayGetDebounceCounter();
+            s_condState51.fanRunning     = ddL298IsRunning();
             xSemaphoreGive(s_condMutex51);
         }
 
