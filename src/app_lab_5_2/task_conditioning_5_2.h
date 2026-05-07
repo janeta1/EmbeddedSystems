@@ -13,9 +13,6 @@ typedef struct {
     float      temperature;    // Last measured temperature (°C)
     float      humidity;
     float      error;       
-    float      pTerm;
-    float      iTerm;
-    float      dTerm;
     float      pidOutput;
     RelayState relayRequested; 
     RelayState relayApplied;  

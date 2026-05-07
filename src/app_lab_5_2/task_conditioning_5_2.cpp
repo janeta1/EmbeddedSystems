@@ -19,9 +19,6 @@ TaskConditioningState52 s_condState52 = {
     0.0f,                   // temperature
     0.0f,                   // humidity
     0.0f,                   // error
-    0.0f,                   // pTerm
-    0.0f,                   // iTerm
-    0.0f,                   // dTerm
     0.0f,                   // pidOutput
     RELAY_OFF,              // relayRequested
     RELAY_OFF,              // relayApplied
@@ -31,10 +28,6 @@ TaskConditioningState52 s_condState52 = {
     false                   // fanRunning
 };
 SemaphoreHandle_t s_condMutex52 = NULL;
-
-// Hysteresis state — persists between cycles
-static float sPrevError = 0.0f;
-static float sIntegral = 0.0f;
 
 void taskConditioningInit52() {
     s_condMutex52 = xSemaphoreCreateMutex();
@@ -50,6 +43,10 @@ void taskConditioning52(void *pvParameters) {
         TaskAcquisitionState52 acq = taskAcquisitionGetLatest52();
         TaskInput52 input = taskInputGetLatest52();
 
+        float dt = TASK_COND52_MS / 1000.0f; // Convert ms to seconds for PID calculations
+        static float integral = 0.0f; // Integral term accumulator
+        static float prevError = 0.0f; // Previous error for derivative calculation
+
         float sp   = input.setPoint; // SetPoint set by user via serial
         float kp   = input.kp;      // Proportional gain set by user via serial
         float ki   = input.ki;      // Integral gain set by user via serial
@@ -58,21 +55,27 @@ void taskConditioning52(void *pvParameters) {
         float humidity = acq.humidity;
 
         // 2. PID control logic
+        static float prevSetpoint = DEFAULT_SETPOINT; 
+        // Reset integral if setpoint changed significantly
+        float spDelta = sp - prevSetpoint;
+        if (spDelta < 0.0f) spDelta = -spDelta;
+        if (spDelta > 0.05f) {
+            integral   = 0.0f;
+            prevError  = 0.0f;
+        }
+        prevSetpoint = sp;
+
         float error = sp - temp;
-        float derivative = (error - sPrevError) / PID_DT;
-
-        sIntegral += error * PID_DT;
+        integral += error * dt;
         // Anti-windup: clamp integral term to prevent excessive overshoot
-        if (sIntegral > PID_INTEGRAL_MAX) sIntegral = PID_INTEGRAL_MAX;
-        if (sIntegral < PID_INTEGRAL_MIN) sIntegral = PID_INTEGRAL_MIN;
+        if (integral > PID_INTEGRAL_MAX) integral = PID_INTEGRAL_MAX;
+        if (integral < PID_INTEGRAL_MIN) integral = PID_INTEGRAL_MIN;
 
-        float pTerm = kp * error;
-        float iTerm = ki * sIntegral;
-        float dTerm = kd * derivative;
-        float output = pTerm + iTerm + dTerm;
+        float derivative = (error - prevError) / dt;
+        prevError = error;
 
-        sPrevError = error;
-        int fanSpeed = 0;
+        float output = kp * error + ki * integral + kd * derivative;
+        float rawOutput = output; 
 
         // 3. Map PID output to relay and fan control
         if (output > 0.0f) {
@@ -80,11 +83,10 @@ void taskConditioning52(void *pvParameters) {
             ddL298Stop();
         } else {
             ddRelaySetRequested(RELAY_OFF);
-            fanSpeed = (int) (-output); 
+            int fanSpeed = (int)((-rawOutput / PID_INTEGRAL_MAX) * 255.0f);
             if (fanSpeed > 100) fanSpeed = 100;
-            if (fanSpeed < 0) fanSpeed = 0;
             ddL298SetDirection(MOTOR_FORWARD);
-            ddL298SetSpeed(fanSpeed);
+            ddL298SetSpeed(fanSpeed); 
         }
 
         ddRelayStep();
@@ -98,15 +100,12 @@ void taskConditioning52(void *pvParameters) {
             s_condState52.temperature    = temp;
             s_condState52.humidity       = humidity;
             s_condState52.error          = error;
-            s_condState52.pTerm          = pTerm;
-            s_condState52.iTerm          = iTerm;
-            s_condState52.dTerm          = dTerm;
             s_condState52.pidOutput      = output;
             s_condState52.relayRequested = ddRelayGetRequested();
             s_condState52.relayApplied   = ddRelayGetApplied();
             s_condState52.relayPending   = ddRelayGetPending() != ddRelayGetApplied();
             s_condState52.relayDebounce  = ddRelayGetDebounceCounter();
-            s_condState52.fanSpeed       = fanSpeed;
+            s_condState52.fanSpeed       = (int)(-rawOutput);
             s_condState52.fanRunning     = ddL298IsRunning();
             xSemaphoreGive(s_condMutex52);
         }

@@ -15,12 +15,12 @@
 // Default SetPoint (degrees C)
 #define DEFAULT_SETPOINT 25.0f
 
-#define DEFAULT_KP 20.0f
-#define DEFAULT_KI 0.5f
-#define DEFAULT_KD 1.0f
+#define DEFAULT_KP 2.0f
+#define DEFAULT_KI 0.1f
+#define DEFAULT_KD 0.5f
 
-#define PID_INTEGRAL_MAX 255.0f
-#define PID_INTEGRAL_MIN -255.0f
+#define PID_INTEGRAL_MIN  -100.0f
+#define PID_INTEGRAL_MAX  100.0f
 
 // Task periods
 #define TASK_ACQ52_MS 2000

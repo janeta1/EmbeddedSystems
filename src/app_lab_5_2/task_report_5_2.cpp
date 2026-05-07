@@ -23,10 +23,10 @@ void taskReport52(void *pvParameters) {
         }
 
         // Serial Plotter (Arduino format: Label:Value,Label:Value)
-        printf("SetPoint:%.2f Temp:%.2f Humidity:%.1f Output:%.2f\n",
+        printf("SetPoint:%.2f Temp:%.2f Relay:%.1f Output:%.2f\n",
             (double) snap.setPoint,
             (double) snap.temperature,
-            (double) snap.humidity,
+            (double) snap.relayApplied,
             (double) snap.pidOutput);
 
         // LCD
@@ -50,8 +50,6 @@ void taskReport52(void *pvParameters) {
         printf("  Error:    %.2f\n",    (double) snap.error);
         printf("  Kp=%.2f  Ki=%.2f  Kd=%.2f\n",
             (double) snap.kp, (double) snap.ki, (double) snap.kd);
-        printf("  P=%.2f  I=%.2f  D=%.2f\n",
-            (double) snap.pTerm, (double) snap.iTerm, (double) snap.dTerm);
         printf("  Output:   %.2f\n",    (double) snap.pidOutput);
         printf(" [Relay]\n");
         printf("  Requested: %s\n", snap.relayRequested == RELAY_ON ? "ON"  : "OFF");

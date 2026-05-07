@@ -70,7 +70,7 @@ void taskInput52(void *pvParameters) {
                 strTrim(argument);
                 float value = (float) atof(argument);
 
-                if (value < 0.1f) value = 0.1f; // enforce minimum hysteresis
+                if (value < 0.1f) value = 0.0f; // enforce minimum hysteresis
 
                 if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
                     s_cmd.kp   = value;
@@ -84,7 +84,7 @@ void taskInput52(void *pvParameters) {
                 strTrim(argument);
                 float value = (float) atof(argument);
 
-                if (value < 0.1f) value = 0.1f; // enforce minimum hysteresis
+                if (value < 0.1f) value = 0.0f; // enforce minimum hysteresis
 
                 if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
                     s_cmd.ki   = value;
@@ -98,7 +98,7 @@ void taskInput52(void *pvParameters) {
                 strTrim(argument);
                 float value = (float) atof(argument);
 
-                if (value < 0.1f) value = 0.1f; // enforce minimum hysteresis
+                if (value < 0.1f) value = 0.0f; // enforce minimum hysteresis
 
                 if (xSemaphoreTake(s_mutex, portMAX_DELAY) == pdTRUE) {
                     s_cmd.kd   = value;
