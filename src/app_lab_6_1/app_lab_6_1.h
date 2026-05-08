@@ -6,7 +6,7 @@
 
 // ── Pin definitions ───────────────────────────────────────────────
 #define BUTTON_PIN_61   2
-#define LED_PIN_61      8
+#define LED_PIN_61      13
 
 // ── Task periods ──────────────────────────────────────────────────
 #define TASK_REPORT_61_MS  500
